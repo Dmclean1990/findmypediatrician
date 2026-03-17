@@ -34,6 +34,9 @@ export default function RootLayout({
                 <a href="/search" className="text-sm text-slate-600 hover:text-primary-600 transition-colors">
                   Search
                 </a>
+                <a href="/map" className="text-sm text-slate-600 hover:text-primary-600 transition-colors">
+                  Map
+                </a>
               </nav>
             </div>
           </div>
@@ -51,6 +54,9 @@ export default function RootLayout({
                 <a href="/search" className="text-sm hover:text-white transition-colors">
                   Search Directory
                 </a>
+                <a href="/map" className="text-sm hover:text-white transition-colors">
+                  Find Nearby
+                </a>
               </div>
             </div>
           </div>
@@ -59,3 +65,4 @@ export default function RootLayout({
     </html>
   );
 }
+
