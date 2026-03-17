@@ -7,15 +7,26 @@ type Props = { params: { id: string } };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { data } = await supabase
     .from("pediatricians")
-    .select("first_name, last_name, city, state")
+    .select("first_name, last_name, city, state, specialty")
     .eq("id", params.id)
     .single();
 
   if (!data) return { title: "Pediatrician Not Found" };
 
+  const location = [data.city, data.state].filter(Boolean).join(", ");
+  const title = `Dr. ${data.first_name} ${data.last_name} - Pediatrician in ${location}`;
+  const description = `Dr. ${data.first_name} ${data.last_name} is a ${data.specialty || "pediatrician"} in ${location}. View contact info, insurance accepted, office hours, and whether they are accepting new patients.`;
+
   return {
-    title: `Dr. ${data.first_name} ${data.last_name} - Pediatrician in ${data.city}, ${data.state}`,
-    description: `Find contact information and details for Dr. ${data.first_name} ${data.last_name}, a pediatrician in ${data.city}, ${data.state}.`,
+    title,
+    description,
+    openGraph: {
+      title, description, type: "profile",
+      url: `https://findmypediatrician.com/pediatrician/${params.id}`,
+      siteName: "FindMyPediatrician",
+    },
+    twitter: { card: "summary", title, description },
+    alternates: { canonical: `https://findmypediatrician.com/pediatrician/${params.id}` },
   };
 }
 
@@ -29,9 +40,67 @@ export default async function PediatricianPage({ params }: Props) {
   if (error || !doc) notFound();
 
   const initials = `${doc.first_name?.[0] || ""}${doc.last_name?.[0] || ""}`;
+  const locationStr = [doc.city, doc.state].filter(Boolean).join(", ");
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Physician",
+    name: `Dr. ${doc.first_name} ${doc.last_name}`,
+    ...(doc.specialty && { medicalSpecialty: doc.specialty }),
+    ...(doc.practice_name && { worksFor: { "@type": "MedicalBusiness", name: doc.practice_name } }),
+    ...(doc.address && {
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: doc.address,
+        addressLocality: doc.city || undefined,
+        addressRegion: doc.state || undefined,
+        postalCode: doc.zip_code || undefined,
+        addressCountry: "US",
+      },
+    }),
+    ...(!doc.address && doc.city && {
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: doc.city,
+        addressRegion: doc.state || undefined,
+        postalCode: doc.zip_code || undefined,
+        addressCountry: "US",
+      },
+    }),
+    ...(doc.phone && { telephone: doc.phone }),
+    ...(doc.email && { email: doc.email }),
+    ...(doc.website && { url: doc.website }),
+    ...(doc.latitude && doc.longitude && {
+      geo: { "@type": "GeoCoordinates", latitude: doc.latitude, longitude: doc.longitude },
+    }),
+    ...(doc.bio && { description: doc.bio }),
+    ...(doc.image_url && { image: doc.image_url }),
+    ...(doc.rating > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: doc.rating,
+        ...(doc.review_count > 0 && { reviewCount: doc.review_count }),
+      },
+    }),
+    ...(doc.languages && doc.languages.length > 0 && { knowsLanguage: doc.languages }),
+    isAcceptingNewPatients: doc.accepting_new_patients,
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://findmypediatrician.com/" },
+      { "@type": "ListItem", position: 2, name: "Search", item: "https://findmypediatrician.com/search" },
+      ...(doc.state ? [{ "@type": "ListItem", position: 3, name: doc.state, item: `https://findmypediatrician.com/search?state=${encodeURIComponent(doc.state)}` }] : []),
+      { "@type": "ListItem", position: doc.state ? 4 : 3, name: `Dr. ${doc.last_name}` },
+    ],
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-slate-500 mb-8">
         <a href="/" className="hover:text-primary-600 transition-colors">Home</a>
@@ -50,7 +119,6 @@ export default async function PediatricianPage({ params }: Props) {
       </nav>
 
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        {/* Header */}
         <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-8 py-10">
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur text-white flex items-center justify-center text-2xl font-bold shrink-0">
@@ -68,10 +136,8 @@ export default async function PediatricianPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Body */}
         <div className="p-8">
           <div className="grid sm:grid-cols-2 gap-8">
-            {/* Contact Info */}
             <div>
               <h2 className="text-lg font-semibold text-slate-900 mb-4">Contact Information</h2>
               <div className="space-y-4">
@@ -133,7 +199,6 @@ export default async function PediatricianPage({ params }: Props) {
               </div>
             </div>
 
-            {/* Details */}
             <div>
               <h2 className="text-lg font-semibold text-slate-900 mb-4">Details</h2>
               <div className="space-y-4">
@@ -180,7 +245,6 @@ export default async function PediatricianPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Bio */}
           {doc.bio && (
             <div className="mt-8 pt-8 border-t border-slate-200">
               <h2 className="text-lg font-semibold text-slate-900 mb-3">About</h2>
@@ -190,7 +254,6 @@ export default async function PediatricianPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Back link */}
       <div className="mt-6">
         <a
           href="/search"
