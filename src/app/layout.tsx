@@ -2,10 +2,54 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Find My Pediatrician - Search Pediatricians Near You",
+  title: {
+    default: "Find My Pediatrician - Search 129,000+ Pediatricians Near You",
+    template: "%s | FindMyPediatrician",
+  },
   description:
-    "Search our directory of over 100,000 pediatricians across the United States. Find the right doctor for your child by location, name, or specialty.",
-  keywords: "pediatrician, children doctor, find pediatrician, pediatrics directory",
+    "Search our directory of over 129,000 pediatricians across the United States. Find the right children's doctor near you by location, name, ZIP code, or specialty. Free and updated daily.",
+  keywords: [
+    "pediatrician near me",
+    "find pediatrician",
+    "children doctor near me",
+    "pediatrician directory",
+    "pediatrics",
+    "kids doctor",
+    "child doctor",
+    "pediatrician accepting new patients",
+    "best pediatrician near me",
+  ],
+  metadataBase: new URL("https://findmypediatrician.com"),
+  openGraph: {
+    title: "Find My Pediatrician - Search 129,000+ Pediatricians Near You",
+    description:
+      "The most comprehensive free directory of pediatricians in the United States. Search by location, ZIP code, or doctor name.",
+    url: "https://findmypediatrician.com",
+    siteName: "FindMyPediatrician",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Find My Pediatrician - Search 129,000+ Pediatricians Near You",
+    description:
+      "The most comprehensive free directory of pediatricians in the United States.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://findmypediatrician.com",
+  },
+  verification: {},
 };
 
 export default function RootLayout({
@@ -16,6 +60,26 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "FindMyPediatrician",
+              url: "https://findmypediatrician.com",
+              description: "Search our directory of over 129,000 pediatricians across the United States.",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://findmypediatrician.com/search?q={search_term_string}",
+                },
+                "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
         <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
@@ -65,4 +129,3 @@ export default function RootLayout({
     </html>
   );
 }
-
