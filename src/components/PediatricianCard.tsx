@@ -3,11 +3,11 @@
 import { Pediatrician } from "@/lib/supabase";
 
 export default function PediatricianCard({ doc }: { doc: Pediatrician }) {
-  const initials = \`\${doc.first_name?.[0] || ""}\${doc.last_name?.[0] || ""}\`;
+    const initials = `${doc.first_name?.[0] || ""}${doc.last_name?.[0] || ""}`;
 
   return (
     <a
-      href={\`/pediatrician/\${doc.id}\`}
+            href={`/pediatrician/${doc.id}`
       className="block bg-white rounded-xl border border-slate-200 hover:border-primary-300 hover:shadow-lg transition-all p-6 group"
     >
       <div className="flex items-start gap-4">
@@ -31,7 +31,7 @@ export default function PediatricianCard({ doc }: { doc: Pediatrician }) {
             </svg>
             <span className="truncate">
               {[doc.city, doc.state].filter(Boolean).join(", ")}
-              {doc.zip_code ? \` \${doc.zip_code}\` : ""}
+              {doc.zip_code ? ` ${doc.zip_code}` : ""}
             </span>
           </div>
           {doc.phone && (
