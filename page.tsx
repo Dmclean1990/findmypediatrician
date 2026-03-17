@@ -21,7 +21,7 @@ async function geocode(query: string): Promise<{ lat: number; lng: number } | nu
 
 // Haversine distance in miles
 function distanceMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 3959; // Earth radius in miles
+  const R = 3959;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -44,28 +44,21 @@ export default function MapPage() {
   const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [leafletLoaded, setLeafletLoaded] = useState(false);
   const [error, setError] = useState("");
-  const [radius, setRadius] = useState(10); // miles
+  const [radius, setRadius] = useState(10);
   const [gettingLocation, setGettingLocation] = useState(false);
 
-  // Load Leaflet CSS and JS dynamically
   useEffect(() => {
     if (typeof window === "undefined") return;
-
-    // Check if already loaded
     if ((window as any).L) {
       setLeafletLoaded(true);
       return;
     }
-
-    // Load CSS
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
     link.integrity = "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=";
     link.crossOrigin = "";
     document.head.appendChild(link);
-
-    // Load JS
     const script = document.createElement("script");
     script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
     script.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
@@ -74,32 +67,25 @@ export default function MapPage() {
     document.head.appendChild(script);
   }, []);
 
-  // Initialize map
   useEffect(() => {
     if (!leafletLoaded || !mapRef.current || mapInstanceRef.current) return;
-
     const L = (window as any).L;
-    const map = L.map(mapRef.current).setView([39.8283, -98.5795], 4); // Center US
-
+    const map = L.map(mapRef.current).setView([39.8283, -98.5795], 4);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
     }).addTo(map);
-
     mapInstanceRef.current = map;
     markersRef.current = L.layerGroup().addTo(map);
   }, [leafletLoaded]);
 
-  // Near Me handler using browser geolocation
   const handleNearMe = useCallback(() => {
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser.");
       return;
     }
-
     setGettingLocation(true);
     setError("");
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude;
@@ -107,13 +93,10 @@ export default function MapPage() {
         setGettingLocation(false);
         setSearchInput("My Location");
         setSearchCenter({ lat, lng });
-
-        // Trigger the search with these coords
         (async () => {
           setLoading(true);
           const latDelta = radius / 69;
           const lngDelta = radius / (69 * Math.cos((lat * Math.PI) / 180));
-
           const { data, error: dbError } = await supabase
             .from("pediatricians")
             .select("*")
@@ -124,13 +107,11 @@ export default function MapPage() {
             .not("latitude", "is", null)
             .not("longitude", "is", null)
             .limit(200);
-
           if (dbError) {
             setError("Error searching the database.");
             setLoading(false);
             return;
           }
-
           const withDistance = (data || [])
             .map((doc: Pediatrician) => ({
               ...doc,
@@ -138,13 +119,10 @@ export default function MapPage() {
             }))
             .filter((doc) => doc.distance <= radius)
             .sort((a, b) => a.distance - b.distance);
-
           setResults(withDistance);
-
           if (mapInstanceRef.current && markersRef.current) {
             const L = (window as any).L;
             markersRef.current.clearLayers();
-
             const searchIcon = L.divIcon({
               html: '<div style="background:#2563eb;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>',
               iconSize: [16, 16],
@@ -154,7 +132,6 @@ export default function MapPage() {
             L.marker([lat, lng], { icon: searchIcon })
               .addTo(markersRef.current)
               .bindPopup("<strong>Your location</strong>");
-
             withDistance.forEach((doc) => {
               if (doc.latitude && doc.longitude) {
                 const popupContent = `
@@ -179,7 +156,6 @@ export default function MapPage() {
                   .bindPopup(popupContent);
               }
             });
-
             if (withDistance.length > 0) {
               const bounds = L.latLngBounds(withDistance.map((d) => [d.latitude!, d.longitude!]));
               bounds.extend([lat, lng]);
@@ -188,7 +164,6 @@ export default function MapPage() {
               mapInstanceRef.current.setView([lat, lng], 12);
             }
           }
-
           setLoading(false);
         })();
       },
@@ -204,31 +179,22 @@ export default function MapPage() {
     );
   }, [radius]);
 
-  // Search for pediatricians near a location
   const handleSearch = useCallback(
     async (e?: React.FormEvent) => {
       if (e) e.preventDefault();
       if (!searchInput.trim()) return;
-
       setLoading(true);
       setError("");
       setResults([]);
-
-      // Geocode the search query
       const coords = await geocode(searchInput);
       if (!coords) {
         setError("Could not find that location. Try a different address or ZIP code.");
         setLoading(false);
         return;
       }
-
       setSearchCenter(coords);
-
-      // Calculate bounding box for the radius
-      const latDelta = radius / 69; // ~69 miles per degree latitude
+      const latDelta = radius / 69;
       const lngDelta = radius / (69 * Math.cos((coords.lat * Math.PI) / 180));
-
-      // Query Supabase for pediatricians within the bounding box
       const { data, error: dbError } = await supabase
         .from("pediatricians")
         .select("*")
@@ -239,14 +205,11 @@ export default function MapPage() {
         .not("latitude", "is", null)
         .not("longitude", "is", null)
         .limit(200);
-
       if (dbError) {
         setError("Error searching the database. Please try again.");
         setLoading(false);
         return;
       }
-
-      // Calculate distances and sort
       const withDistance = (data || [])
         .map((doc: Pediatrician) => ({
           ...doc,
@@ -254,15 +217,10 @@ export default function MapPage() {
         }))
         .filter((doc) => doc.distance <= radius)
         .sort((a, b) => a.distance - b.distance);
-
       setResults(withDistance);
-
-      // Update map
       if (mapInstanceRef.current && markersRef.current) {
         const L = (window as any).L;
         markersRef.current.clearLayers();
-
-        // Add search center marker
         const searchIcon = L.divIcon({
           html: '<div style="background:#2563eb;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>',
           iconSize: [16, 16],
@@ -272,8 +230,6 @@ export default function MapPage() {
         L.marker([coords.lat, coords.lng], { icon: searchIcon })
           .addTo(markersRef.current)
           .bindPopup("<strong>Your search location</strong>");
-
-        // Add pediatrician markers
         withDistance.forEach((doc) => {
           if (doc.latitude && doc.longitude) {
             const popupContent = `
@@ -287,21 +243,17 @@ export default function MapPage() {
                 <br/><a href="/pediatrician/${doc.id}" style="font-size:12px;color:#2563eb;text-decoration:underline">View profile \u2192</a>
               </div>
             `;
-
             const docIcon = L.divIcon({
               html: '<div style="background:#ef4444;width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3)"></div>',
               iconSize: [12, 12],
               iconAnchor: [6, 6],
               className: "",
             });
-
             L.marker([doc.latitude, doc.longitude], { icon: docIcon })
               .addTo(markersRef.current)
               .bindPopup(popupContent);
           }
         });
-
-        // Fit bounds
         if (withDistance.length > 0) {
           const bounds = L.latLngBounds(
             withDistance.map((d) => [d.latitude!, d.longitude!])
@@ -312,7 +264,6 @@ export default function MapPage() {
           mapInstanceRef.current.setView([coords.lat, coords.lng], 12);
         }
       }
-
       setLoading(false);
     },
     [searchInput, radius]
@@ -320,27 +271,12 @@ export default function MapPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-64px)]">
-      {/* Search Bar */}
       <div className="bg-white border-b border-slate-200 px-4 py-3">
         <form onSubmit={handleSearch} className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-2">
           <div className="flex-1 relative">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-              />
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
             </svg>
             <input
               type="text"
@@ -395,9 +331,7 @@ export default function MapPage() {
         )}
       </div>
 
-      {/* Main Content: Map + Results Sidebar */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* Map */}
         <div className="flex-1 relative">
           <div ref={mapRef} className="w-full h-full min-h-[300px]" />
           {!leafletLoaded && (
@@ -406,8 +340,6 @@ export default function MapPage() {
             </div>
           )}
         </div>
-
-        {/* Results Sidebar */}
         <div className="lg:w-96 border-t lg:border-t-0 lg:border-l border-slate-200 bg-white overflow-y-auto max-h-[40vh] lg:max-h-none">
           {results.length > 0 ? (
             <>
