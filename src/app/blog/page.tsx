@@ -70,7 +70,7 @@ export default function BlogPage() {
                         day: "numeric",
                       })}
                     </span>
-                    <span>â¢</span>
+                    <span>|</span>
                     <span>{post.readTime} min read</span>
                   </div>
 
