@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
+import { getAllPosts } from "@/lib/blog";
 
 export async function generateSitemaps() {
   const { count } = await supabase
@@ -20,6 +21,14 @@ export default async function sitemap({
 }): Promise<MetadataRoute.Sitemap> {
   const perSitemap = 45000;
   const start = id * perSitemap;
+
+  const blogPosts = getAllPosts();
+  const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `https://findmypediatrician.com/blog/${post.slug}`,
+    lastModified: post.date,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
 
   const staticPages: MetadataRoute.Sitemap =
     id === 0
@@ -42,6 +51,13 @@ export default async function sitemap({
             changeFrequency: "weekly",
             priority: 0.8,
           },
+          {
+            url: "https://findmypediatrician.com/blog",
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.8,
+          },
+          ...blogPages,
         ]
       : [];
 
