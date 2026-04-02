@@ -84,13 +84,13 @@ export default function BlogPostPage({
             <div className="flex items-center gap-2">
               <span className="text-sm">{post.author}</span>
             </div>
-            <span>â¢</span>
+            <span>|</span>
             <time dateTime={post.date} className="text-sm">
               {formattedDate}
             </time>
-            <span>â¢</span>
+            <span>|</span>
             <span className="text-sm">{post.readTime} min read</span>
-            <span>â¢</span>
+            <span>|</span>
             <span className="inline-block px-3 py-1 bg-primary-100 text-primary-700 text-xs font-medium rounded-full">
               {post.category}
             </span>
