@@ -140,6 +140,12 @@ export default function RootLayout({
                 >
                   Map
                 </a>
+                <a
+                  href="/blog"
+                  className="text-sm text-slate-600 hover:text-primary-600 transition-colors"
+                >
+                  Blog
+                </a>
               </nav>
             </div>
           </div>
@@ -165,6 +171,12 @@ export default function RootLayout({
                   className="text-sm hover:text-white transition-colors"
                 >
                   Find Nearby
+                </a>
+                <a
+                  href="/blog"
+                  className="text-sm hover:text-white transition-colors"
+                >
+                  Blog
                 </a>
               </div>
             </div>
