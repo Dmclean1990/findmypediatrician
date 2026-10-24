@@ -76,7 +76,11 @@ function SearchPageContent() {
     parsedLocation.state || normalizeState(searchParams.get("state") || "") || searchParams.get("state") || ""
   );
   const [city, setCity] = useState(parsedLocation.city || searchParams.get("city") || "");
-  const [zip, setZip] = useState(parsedLocation.zip || searchParams.get("zip") || "");
+  // zip filters the main search (from the URL); zipInput is the ZIP + radius box,
+  // which only searches when its button is clicked.
+  const [zip] = useState(parsedLocation.zip || searchParams.get("zip") || "");
+  const [zipInput, setZipInput] = useState(zip);
+  const [searchedZip, setSearchedZip] = useState("");
   const [radius, setRadius] = useState(parseInt(searchParams.get("radius") || "") || DEFAULT_RADIUS);
   const [nearMeActive, setNearMeActive] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -225,7 +229,7 @@ function SearchPageContent() {
 
   // ZIP + radius search
   const handleZipRadiusSearch = async () => {
-    if (!zip || !/^\d{5}$/.test(zip.trim())) {
+    if (!/^\d{5}$/.test(zipInput.trim())) {
       setGeoError("Please enter a valid 5-digit ZIP code.");
       return;
     }
@@ -235,7 +239,7 @@ function SearchPageContent() {
 
     // Only switch modes once the ZIP resolves, so a failed lookup leaves the
     // current results on screen instead of wiping them.
-    const coords = await geocodeZip(zip.trim());
+    const coords = await geocodeZip(zipInput.trim());
     if (!coords) {
       setGeoError("Could not find that ZIP code. Please try another.");
       return;
@@ -243,6 +247,7 @@ function SearchPageContent() {
 
     latestRequest.current++;
     setSearchMode("zip_radius");
+    setSearchedZip(zipInput.trim());
     setUserLocation(coords);
     fetchNearby(coords.lat, coords.lng, r);
   };
@@ -329,8 +334,8 @@ function SearchPageContent() {
             <input
               type="text"
               placeholder="ZIP code"
-              value={zip}
-              onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
+              value={zipInput}
+              onChange={(e) => setZipInput(e.target.value.replace(/\D/g, "").slice(0, 5))}
               className="w-32 px-3 py-2 rounded-lg border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
               maxLength={5}
             />
@@ -395,7 +400,7 @@ function SearchPageContent() {
         )}
         {(searchMode === "nearme" || searchMode === "zip_radius") && !loading && (
           <p className="text-primary-600 text-xs mt-2">
-            Showing results within {radius} miles{searchMode === "nearme" ? " of your location" : ` of ZIP ${zip}`} {"\u2014"} sorted by distance
+            Showing results within {radius} miles{searchMode === "nearme" ? " of your location" : ` of ZIP ${searchedZip}`} {"\u2014"} sorted by distance
           </p>
         )}
       </div>
