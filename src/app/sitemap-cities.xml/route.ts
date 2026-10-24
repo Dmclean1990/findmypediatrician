@@ -7,12 +7,37 @@ function slugify(city: string, state: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-export async function GET() {
-  const { data } = await supabase
+export const revalidate = 86400;
+
+// Supabase returns at most 1,000 rows per request, so page through the table,
+// a few pages at a time to stay inside the function time limit.
+async function fetchAllCityStates() {
+  const pageSize = 1000;
+  const concurrency = 10;
+  const { count } = await supabase
     .from("pediatricians")
-    .select("city, state")
-    .not("city", "is", null)
-    .not("state", "is", null);
+    .select("*", { count: "exact", head: true });
+  const pages = Math.ceil((count || 0) / pageSize);
+
+  const rows: { city: string | null; state: string | null }[] = [];
+  for (let start = 0; start < pages; start += concurrency) {
+    const batch = await Promise.all(
+      Array.from({ length: Math.min(concurrency, pages - start) }, (_, i) => {
+        const from = (start + i) * pageSize;
+        return supabase
+          .from("pediatricians")
+          .select("city, state")
+          .order("id", { ascending: true })
+          .range(from, from + pageSize - 1);
+      })
+    );
+    batch.forEach(({ data }) => rows.push(...(data || [])));
+  }
+  return rows;
+}
+
+export async function GET() {
+  const data = await fetchAllCityStates();
 
   const citySet = new Set<string>();
   const cities: { city: string; state: string }[] = [];

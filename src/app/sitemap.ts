@@ -57,6 +57,26 @@ export default async function sitemap({
             changeFrequency: "weekly",
             priority: 0.8,
           },
+          {
+            url: "https://findmypediatrician.com/about",
+            changeFrequency: "yearly",
+            priority: 0.3,
+          },
+          {
+            url: "https://findmypediatrician.com/contact",
+            changeFrequency: "yearly",
+            priority: 0.3,
+          },
+          {
+            url: "https://findmypediatrician.com/privacy",
+            changeFrequency: "yearly",
+            priority: 0.3,
+          },
+          {
+            url: "https://findmypediatrician.com/terms",
+            changeFrequency: "yearly",
+            priority: 0.3,
+          },
           ...blogPages,
         ]
       : [];

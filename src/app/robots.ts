@@ -9,9 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/"],
       },
     ],
-    sitemap: [
-      "https://findmypediatrician.com/sitemap.xml",
-      "https://findmypediatrician.com/sitemap-cities.xml",
-    ],
+    // The index lists every chunk plus the city sitemap.
+    sitemap: "https://findmypediatrician.com/sitemap.xml",
   };
 }
