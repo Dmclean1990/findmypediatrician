@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense, useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { supabase, Pediatrician } from "@/lib/supabase";
+import { parseLocation, normalizeState } from "@/lib/location";
 import PediatricianCard from "@/components/PediatricianCard";
 
 const PAGE_SIZE = 20;
@@ -64,11 +65,17 @@ function SearchPageContent() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
 
+  // The homepage sends a single free-text "location" param. Parse it before the first
+  // fetch so the initial results are already filtered.
+  const parsedLocation = parseLocation(searchParams.get("location") || "");
+
   // Form state
   const [query, setQuery] = useState(searchParams.get("q") || "");
-  const [state, setState] = useState(searchParams.get("state") || "");
-  const [city, setCity] = useState(searchParams.get("city") || "");
-  const [zip, setZip] = useState(searchParams.get("zip") || "");
+  const [state, setState] = useState(
+    parsedLocation.state || normalizeState(searchParams.get("state") || "") || searchParams.get("state") || ""
+  );
+  const [city, setCity] = useState(parsedLocation.city || searchParams.get("city") || "");
+  const [zip, setZip] = useState(parsedLocation.zip || searchParams.get("zip") || "");
   const [radius, setRadius] = useState(parseInt(searchParams.get("radius") || "0"));
   const [nearMeActive, setNearMeActive] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -76,38 +83,28 @@ function SearchPageContent() {
   const [gettingLocation, setGettingLocation] = useState(false);
   const [searchMode, setSearchMode] = useState<"filters" | "nearme" | "zip_radius">("filters");
 
-  // Parse the "location" param from homepage
-  const locationParam = searchParams.get("location") || "";
-
-  useEffect(() => {
-    if (locationParam) {
-      if (/^\d{5}$/.test(locationParam.trim())) {
-        setZip(locationParam.trim());
-      } else if (locationParam.includes(",")) {
-        const parts = locationParam.split(",").map((s) => s.trim());
-        setCity(parts[0]);
-        if (parts[1]) setState(parts[1]);
-      } else {
-        setState(locationParam.trim());
-      }
-    }
-  }, [locationParam]);
+  // Ignore responses from searches that have since been replaced, so a slow
+  // earlier request can't overwrite newer results.
+  const latestRequest = useRef(0);
 
   // Standard filter search
   const fetchResults = useCallback(async () => {
     if (searchMode === "nearme" || searchMode === "zip_radius") return;
+    const requestId = ++latestRequest.current;
     setLoading(true);
 
     try {
       let dbQuery = supabase.from("pediatricians").select("*", { count: "exact" });
 
       if (query) {
+        // Strip characters that would break the PostgREST or() filter syntax.
+        const q = query.replace(/[,()*%]/g, " ").trim();
         dbQuery = dbQuery.or(
-          `first_name.ilike.%${query}%,last_name.ilike.%${query}%,practice_name.ilike.%${query}%`
+          `full_name.ilike.%${q}%,first_name.ilike.%${q}%,last_name.ilike.%${q}%,practice_name.ilike.%${q}%`
         );
       }
-      if (state) dbQuery = dbQuery.ilike("state", state);
-      if (city) dbQuery = dbQuery.ilike("city", city);
+      if (state) dbQuery = dbQuery.ilike("state", normalizeState(state) || state.trim());
+      if (city) dbQuery = dbQuery.ilike("city", city.trim());
       if (zip) dbQuery = dbQuery.eq("zip_code", zip);
 
       dbQuery = dbQuery
@@ -115,6 +112,7 @@ function SearchPageContent() {
         .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
 
       const { data, count, error } = await dbQuery;
+      if (requestId !== latestRequest.current) return;
 
       if (error) {
         console.error("Search error:", error);
@@ -127,7 +125,7 @@ function SearchPageContent() {
     } catch (err) {
       console.error("Search error:", err);
     } finally {
-      setLoading(false);
+      if (requestId === latestRequest.current) setLoading(false);
     }
   }, [query, state, city, zip, page, searchMode]);
 
