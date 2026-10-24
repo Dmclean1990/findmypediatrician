@@ -328,10 +328,10 @@ function SearchPageContent() {
             </svg>
             <input
               type="text"
-              placeholder="ZIP code (e.g. 90210)"
+              placeholder="ZIP code"
               value={zip}
               onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
-              className="w-28 px-3 py-2 rounded-lg border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+              className="w-32 px-3 py-2 rounded-lg border border-slate-300 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
               maxLength={5}
             />
             <select
