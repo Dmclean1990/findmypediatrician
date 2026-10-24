@@ -1,6 +1,7 @@
 import { supabase, Pediatrician } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { displayName, initialsFor } from "@/lib/format";
 
 type Props = { params: { slug: string } };
 
@@ -105,7 +106,7 @@ export default async function CityPage({ params }: Props) {
         position: i + 1,
         item: {
           "@type": "Physician",
-          name: `Dr. ${doc.first_name} ${doc.last_name}`,
+          name: displayName(doc),
           url: `https://findmypediatrician.com/pediatrician/${doc.id}`,
           ...(doc.specialty && { medicalSpecialty: doc.specialty }),
           ...(doc.address && {
@@ -190,7 +191,7 @@ export default async function CityPage({ params }: Props) {
       {/* Results Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {data.map((doc: Pediatrician) => {
-          const initials = `${doc.first_name?.[0] || ""}${doc.last_name?.[0] || ""}`;
+          const initials = initialsFor(doc);
           return (
             <a
               key={doc.id}
@@ -203,7 +204,7 @@ export default async function CityPage({ params }: Props) {
                 </div>
                 <div className="min-w-0">
                   <h2 className="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors truncate">
-                    Dr. {doc.first_name} {doc.last_name}
+                    {displayName(doc)}
                   </h2>
                   <p className="text-xs text-slate-500 mt-0.5">{doc.specialty || "Pediatrician"}</p>
                   {doc.address && (

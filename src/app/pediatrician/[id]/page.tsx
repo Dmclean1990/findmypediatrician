@@ -1,6 +1,7 @@
 import { supabase, Pediatrician } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { displayName, initialsFor } from "@/lib/format";
 
 type Props = { params: { id: string } };
 
@@ -39,13 +40,14 @@ export default async function PediatricianPage({ params }: Props) {
 
   if (error || !doc) notFound();
 
-  const initials = `${doc.first_name?.[0] || ""}${doc.last_name?.[0] || ""}`;
+  const name = displayName(doc);
+  const initials = initialsFor(doc);
   const locationStr = [doc.city, doc.state].filter(Boolean).join(", ");
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Physician",
-    name: `Dr. ${doc.first_name} ${doc.last_name}`,
+    name,
     ...(doc.specialty && { medicalSpecialty: doc.specialty }),
     ...(doc.practice_name && { worksFor: { "@type": "MedicalBusiness", name: doc.practice_name } }),
     ...(doc.address && {
@@ -93,7 +95,7 @@ export default async function PediatricianPage({ params }: Props) {
       { "@type": "ListItem", position: 1, name: "Home", item: "https://findmypediatrician.com/" },
       { "@type": "ListItem", position: 2, name: "Search", item: "https://findmypediatrician.com/search" },
       ...(doc.state ? [{ "@type": "ListItem", position: 3, name: doc.state, item: `https://findmypediatrician.com/search?state=${encodeURIComponent(doc.state)}` }] : []),
-      { "@type": "ListItem", position: doc.state ? 4 : 3, name: `Dr. ${doc.last_name}` },
+      { "@type": "ListItem", position: doc.state ? 4 : 3, name },
     ],
   };
 
@@ -115,7 +117,7 @@ export default async function PediatricianPage({ params }: Props) {
           </>
         )}
         <span>/</span>
-        <span className="text-slate-900">Dr. {doc.last_name}</span>
+        <span className="text-slate-900 truncate">{name}</span>
       </nav>
 
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
@@ -126,7 +128,7 @@ export default async function PediatricianPage({ params }: Props) {
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white">
-                Dr. {doc.first_name} {doc.last_name}
+                {name}
               </h1>
               {doc.practice_name && (
                 <p className="text-primary-100 mt-1">{doc.practice_name}</p>

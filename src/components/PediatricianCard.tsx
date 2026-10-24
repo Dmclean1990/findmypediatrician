@@ -1,9 +1,10 @@
 "use client";
 
 import { Pediatrician } from "@/lib/supabase";
+import { displayName, initialsFor } from "@/lib/format";
 
 export default function PediatricianCard({ doc }: { doc: Pediatrician }) {
-  const initials = `${doc.first_name?.[0] || ""}${doc.last_name?.[0] || ""}`;
+  const initials = initialsFor(doc);
 
   return (
     <a
@@ -19,7 +20,7 @@ export default function PediatricianCard({ doc }: { doc: Pediatrician }) {
         {/* Info */}
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-slate-900 group-hover:text-primary-700 transition-colors truncate">
-            Dr. {doc.first_name} {doc.last_name}
+            {displayName(doc)}
           </h3>
           {doc.practice_name && (
             <p className="text-sm text-slate-500 truncate">{doc.practice_name}</p>
