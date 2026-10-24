@@ -1,22 +1,24 @@
 import { supabase, Pediatrician } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { displayName, initialsFor } from "@/lib/format";
+import { displayName, initialsFor, primarySpecialty } from "@/lib/format";
 
 type Props = { params: { id: string } };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { data } = await supabase
     .from("pediatricians")
-    .select("first_name, last_name, city, state, specialty")
+    .select("first_name, last_name, full_name, city, state, specialty")
     .eq("id", params.id)
     .single();
 
   if (!data) return { title: "Pediatrician Not Found" };
 
+  const name = displayName(data);
+  const specialty = primarySpecialty(data.specialty);
   const location = [data.city, data.state].filter(Boolean).join(", ");
-  const title = `Dr. ${data.first_name} ${data.last_name} - Pediatrician in ${location}`;
-  const description = `Dr. ${data.first_name} ${data.last_name} is a ${data.specialty || "pediatrician"} in ${location}. View contact info, insurance accepted, office hours, and whether they are accepting new patients.`;
+  const title = `${name} - ${specialty}${location ? ` in ${location}` : ""}`;
+  const description = `${name}: ${specialty.toLowerCase()}${location ? ` in ${location}` : ""}. View address, phone number, website and directions.`;
 
   return {
     title,
@@ -133,7 +135,7 @@ export default async function PediatricianPage({ params }: Props) {
               {doc.practice_name && (
                 <p className="text-primary-100 mt-1">{doc.practice_name}</p>
               )}
-              <p className="text-primary-200 text-sm mt-1">{doc.specialty || "Pediatrics"}</p>
+              <p className="text-primary-200 text-sm mt-1">{primarySpecialty(doc.specialty)}</p>
             </div>
           </div>
         </div>
