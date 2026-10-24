@@ -186,6 +186,18 @@ export default async function RootLayout({
                 </a>
               </div>
             </div>
+            <div className="mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-xs text-slate-500 text-center sm:text-left max-w-xl">
+                FindMyPediatrician is a directory, not medical advice. Confirm details with the
+                practice before your visit. In an emergency, call 911.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+                <a href="/about" className="text-sm hover:text-white transition-colors">About</a>
+                <a href="/contact" className="text-sm hover:text-white transition-colors">Contact</a>
+                <a href="/privacy" className="text-sm hover:text-white transition-colors">Privacy</a>
+                <a href="/terms" className="text-sm hover:text-white transition-colors">Terms</a>
+              </div>
+            </div>
           </div>
         </footer>
       </body>
