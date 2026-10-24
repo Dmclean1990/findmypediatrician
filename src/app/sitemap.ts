@@ -81,13 +81,21 @@ export default async function sitemap({
         ]
       : [];
 
-  const { data } = await supabase
-    .from("pediatricians")
-    .select("id")
-    .order("id", { ascending: true })
-    .range(start, start + perSitemap - 1);
+  // Supabase returns at most 1,000 rows per request, so fetch this chunk in pages.
+  const pageSize = 1000;
+  const pages = await Promise.all(
+    Array.from({ length: perSitemap / pageSize }, (_, i) => {
+      const from = start + i * pageSize;
+      return supabase
+        .from("pediatricians")
+        .select("id")
+        .order("id", { ascending: true })
+        .range(from, from + pageSize - 1);
+    })
+  );
+  const data = pages.flatMap(({ data }) => data || []);
 
-  const pediatricianPages: MetadataRoute.Sitemap = (data || []).map((doc) => ({
+  const pediatricianPages: MetadataRoute.Sitemap = data.map((doc) => ({
     url: `https://findmypediatrician.com/pediatrician/${doc.id}`,
     changeFrequency: "monthly" as const,
     priority: 0.6,
