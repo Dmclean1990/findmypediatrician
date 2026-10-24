@@ -79,13 +79,6 @@ export default async function PediatricianPage({ params }: Props) {
     }),
     ...(doc.bio && { description: doc.bio }),
     ...(doc.image_url && { image: doc.image_url }),
-    ...(doc.rating > 0 && {
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: doc.rating,
-        ...(doc.review_count > 0 && { reviewCount: doc.review_count }),
-      },
-    }),
     ...(doc.languages && doc.languages.length > 0 && { knowsLanguage: doc.languages }),
   };
 
