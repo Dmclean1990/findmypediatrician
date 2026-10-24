@@ -7,6 +7,7 @@ import { parseLocation, normalizeState } from "@/lib/location";
 import PediatricianCard from "@/components/PediatricianCard";
 
 const PAGE_SIZE = 20;
+const DEFAULT_RADIUS = 10;
 
 // Haversine distance in miles
 function distanceMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -76,7 +77,7 @@ function SearchPageContent() {
   );
   const [city, setCity] = useState(parsedLocation.city || searchParams.get("city") || "");
   const [zip, setZip] = useState(parsedLocation.zip || searchParams.get("zip") || "");
-  const [radius, setRadius] = useState(parseInt(searchParams.get("radius") || "0"));
+  const [radius, setRadius] = useState(parseInt(searchParams.get("radius") || "") || DEFAULT_RADIUS);
   const [nearMeActive, setNearMeActive] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [geoError, setGeoError] = useState("");
@@ -206,7 +207,7 @@ function SearchPageContent() {
         setNearMeActive(true);
         setGettingLocation(false);
         setSearchMode("nearme");
-        const r = radius || 10;
+        const r = radius || DEFAULT_RADIUS;
         setRadius(r);
         fetchNearby(loc.lat, loc.lng, r);
       },
@@ -228,24 +229,22 @@ function SearchPageContent() {
       setGeoError("Please enter a valid 5-digit ZIP code.");
       return;
     }
-    if (!radius || radius <= 0) {
-      setGeoError("Please select a search radius.");
-      return;
-    }
-
+    const r = radius > 0 ? radius : DEFAULT_RADIUS;
+    setRadius(r);
     setGeoError("");
-    setLoading(true);
-    setSearchMode("zip_radius");
 
+    // Only switch modes once the ZIP resolves, so a failed lookup leaves the
+    // current results on screen instead of wiping them.
     const coords = await geocodeZip(zip.trim());
     if (!coords) {
       setGeoError("Could not find that ZIP code. Please try another.");
-      setLoading(false);
       return;
     }
 
+    latestRequest.current++;
+    setSearchMode("zip_radius");
     setUserLocation(coords);
-    fetchNearby(coords.lat, coords.lng, radius);
+    fetchNearby(coords.lat, coords.lng, r);
   };
 
   // Update radius for active proximity search
@@ -260,7 +259,7 @@ function SearchPageContent() {
     setNearMeActive(false);
     setSearchMode("filters");
     setUserLocation(null);
-    setRadius(0);
+    setRadius(DEFAULT_RADIUS);
     setGeoError("");
     fetchResults();
   };
@@ -336,11 +335,10 @@ function SearchPageContent() {
               maxLength={5}
             />
             <select
-              value={radius || ""}
-              onChange={(e) => handleRadiusChange(parseInt(e.target.value) || 0)}
+              value={radius}
+              onChange={(e) => handleRadiusChange(parseInt(e.target.value) || DEFAULT_RADIUS)}
               className="px-3 py-2 rounded-lg border border-slate-300 text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <option value="">Radius</option>
               <option value={5}>5 miles</option>
               <option value={10}>10 miles</option>
               <option value={25}>25 miles</option>
