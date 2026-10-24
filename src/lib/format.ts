@@ -14,7 +14,8 @@ export function displayName(doc: NameFields): string {
   const withoutTitle = raw.replace(/^dr\.?\s+/i, "").trim();
 
   if (!withoutTitle) return raw || "Unnamed listing";
-  if (PRACTICE_WORDS.test(withoutTitle)) return withoutTitle;
+  // A single word ("UrgentMed") is a brand or a bare surname, so don't guess "Dr.".
+  if (PRACTICE_WORDS.test(withoutTitle) || !withoutTitle.includes(" ")) return withoutTitle;
   return `Dr. ${withoutTitle}`;
 }
 
