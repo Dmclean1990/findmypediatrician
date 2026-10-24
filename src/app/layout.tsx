@@ -2,16 +2,19 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
+import { getListingCountLabel } from "@/lib/stats";
 
 const GA_MEASUREMENT_ID = "G-JKLGLLBR7W";
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const count = await getListingCountLabel();
+  return {
   title: {
-    default: "Find My Pediatrician - Search 129,000+ Pediatricians Near You",
+    default: `Find My Pediatrician - Search ${count}+ Pediatricians Near You`,
     template: "%s | FindMyPediatrician",
   },
   description:
-    "Search our directory of over 129,000 pediatricians across the United States. Find the right children's doctor near you by location, name, ZIP code, or specialty. Free and updated daily.",
+    `Search our directory of over ${count} pediatricians across the United States. Find the right children's doctor near you by location, name, ZIP code, or specialty. Free and updated daily.`,
   keywords: [
     "pediatrician near me",
     "find pediatrician",
@@ -25,7 +28,7 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://findmypediatrician.com"),
   openGraph: {
-    title: "Find My Pediatrician - Search 129,000+ Pediatricians Near You",
+    title: `Find My Pediatrician - Search ${count}+ Pediatricians Near You`,
     description:
       "The most comprehensive free directory of pediatricians in the United States. Search by location, ZIP code, or doctor name.",
     url: "https://findmypediatrician.com",
@@ -35,7 +38,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Find My Pediatrician - Search 129,000+ Pediatricians Near You",
+    title: `Find My Pediatrician - Search ${count}+ Pediatricians Near You`,
     description:
       "The most comprehensive free directory of pediatricians in the United States.",
   },
@@ -54,13 +57,16 @@ export const metadata: Metadata = {
     canonical: "https://findmypediatrician.com",
   },
   verification: {},
-};
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const count = await getListingCountLabel();
+
   return (
     <html lang="en">
       <head>
@@ -87,7 +93,7 @@ export default function RootLayout({
               name: "FindMyPediatrician",
               url: "https://findmypediatrician.com",
               description:
-                "Search our directory of over 129,000 pediatricians across the United States.",
+                `Search our directory of over ${count} pediatricians across the United States.`,
               potentialAction: {
                 "@type": "SearchAction",
                 target: {

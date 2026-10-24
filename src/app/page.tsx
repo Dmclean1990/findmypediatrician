@@ -1,20 +1,10 @@
-"use client";
+import HomeSearchForm from "@/components/HomeSearchForm";
+import { getListingCountLabel } from "@/lib/stats";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+export const revalidate = 86400;
 
-export default function HomePage() {
-  const router = useRouter();
-  const [query, setQuery] = useState("");
-  const [location, setLocation] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams();
-    if (query) params.set("q", query);
-    if (location) params.set("location", location);
-    router.push(`/search?${params.toString()}`);
-  };
+export default async function HomePage() {
+  const count = await getListingCountLabel();
 
   return (
     <div>
@@ -26,46 +16,11 @@ export default function HomePage() {
               Find the Right Pediatrician for Your Child
             </h1>
             <p className="text-lg sm:text-xl text-primary-100 mb-10">
-              Search our directory of over 100,000 pediatricians across the
+              Search our directory of over {count} pediatricians across the
               United States.
             </p>
 
-            {/* Search Form */}
-            <form onSubmit={handleSearch} className="bg-white rounded-2xl p-2 shadow-2xl">
-              <div className="flex flex-col sm:flex-row gap-2">
-                <div className="flex-1 relative">
-                  <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                  </svg>
-                  <input
-                    type="text"
-                    placeholder="Doctor name or practice..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
-                  />
-                </div>
-                <div className="flex-1 relative">
-                  <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                  </svg>
-                  <input
-                    type="text"
-                    placeholder="City, State, or ZIP code..."
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-base"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 py-4 rounded-xl transition-colors text-base whitespace-nowrap"
-                >
-                  Search
-                </button>
-              </div>
-            </form>
+            <HomeSearchForm />
           </div>
         </div>
       </section>
@@ -137,7 +92,7 @@ export default function HomePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Zm3.75 11.625a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-slate-900 mb-2">100,000+ Listings</h3>
+              <h3 className="font-semibold text-slate-900 mb-2">{count}+ Listings</h3>
               <p className="text-slate-600 text-sm">
                 The most comprehensive directory of pediatricians in the United States.
               </p>
