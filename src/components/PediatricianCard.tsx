@@ -51,14 +51,6 @@ export default function PediatricianCard({ doc }: { doc: Pediatrician }) {
             </div>
           )}
 
-          {/* Tags */}
-          <div className="flex items-center gap-2 mt-3">
-            {doc.accepting_new_patients && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                Accepting New Patients
-              </span>
-            )}
-          </div>
         </div>
       </div>
     </a>

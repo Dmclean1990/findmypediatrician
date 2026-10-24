@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const { city, state } = parsed;
   const title = `Pediatricians in ${city}, ${state} - Find a Children's Doctor Near You`;
-  const description = `Find pediatricians in ${city}, ${state}. Browse our directory of children's doctors, see who is accepting new patients, and find contact information. Free pediatrician search.`;
+  const description = `Find pediatricians in ${city}, ${state}. Browse our directory of children's doctors and find addresses, phone numbers and websites. Free pediatrician search.`;
 
   return {
     title,
@@ -161,8 +161,8 @@ export default async function CityPage({ params }: Props) {
           Pediatricians in {city}, {state}
         </h1>
         <p className="text-slate-600 text-lg max-w-3xl">
-          Browse {total}+ pediatricians in {city}, {state}. Find contact information,
-          see which doctors are accepting new patients, and get directions to their office.
+          Browse {total}+ pediatricians in {city}, {state}. Find addresses, phone numbers
+          and websites, and get directions to each office.
         </p>
       </div>
 
@@ -216,18 +216,6 @@ export default async function CityPage({ params }: Props) {
                   {doc.phone && (
                     <p className="text-xs text-slate-500 mt-1">{doc.phone}</p>
                   )}
-                  <div className="mt-2">
-                    {doc.accepting_new_patients ? (
-                      <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
-                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                        </svg>
-                        Accepting New Patients
-                      </span>
-                    ) : (
-                      <span className="text-xs text-slate-400">Not accepting new patients</span>
-                    )}
-                  </div>
                 </div>
               </div>
             </a>
@@ -243,7 +231,7 @@ export default async function CityPage({ params }: Props) {
         <p className="text-slate-600 text-sm leading-relaxed mb-4">
           Looking for a pediatrician in {city}, {state}? Our directory lists {total}+ pediatricians
           in the {city} area, making it easy to find the right children&apos;s doctor for your family.
-          You can search by name, filter by those accepting new patients, and view each
+          You can search by name and view each
           doctor&apos;s contact information and specialties.
         </p>
         <p className="text-slate-600 text-sm leading-relaxed">

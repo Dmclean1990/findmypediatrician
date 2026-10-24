@@ -87,7 +87,6 @@ export default async function PediatricianPage({ params }: Props) {
       },
     }),
     ...(doc.languages && doc.languages.length > 0 && { knowsLanguage: doc.languages }),
-    isAcceptingNewPatients: doc.accepting_new_patients,
   };
 
   const breadcrumbLd = {
@@ -208,18 +207,8 @@ export default async function PediatricianPage({ params }: Props) {
               <div className="space-y-4">
                 <div>
                   <p className="text-sm font-medium text-slate-500">Accepting New Patients</p>
-                  <p className="text-sm text-slate-900 mt-0.5">
-                    {doc.accepting_new_patients ? (
-                      <span className="inline-flex items-center gap-1 text-green-700">
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                        </svg>
-                        Yes
-                      </span>
-                    ) : (
-                      <span className="text-slate-500">Not currently</span>
-                    )}
-                  </p>
+                  {/* Not tracked yet: every row defaults to true. Phase 3 adds real, dated data. */}
+                  <p className="text-sm text-slate-600 mt-0.5">Call the office to ask.</p>
                 </div>
                 {doc.languages && doc.languages.length > 0 && (
                   <div>
