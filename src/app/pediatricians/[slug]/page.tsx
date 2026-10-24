@@ -62,12 +62,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       type: "website",
-      url: `https://findmypediatrician.com/pediatricians/${params.slug}`,
+      url: `https://www.findmypediatrician.com/pediatricians/${params.slug}`,
       siteName: "FindMyPediatrician",
     },
     twitter: { card: "summary", title, description },
     alternates: {
-      canonical: `https://findmypediatrician.com/pediatricians/${params.slug}`,
+      canonical: `https://www.findmypediatrician.com/pediatricians/${params.slug}`,
     },
   };
 }
@@ -97,7 +97,7 @@ export default async function CityPage({ params }: Props) {
     "@type": "MedicalWebPage",
     name: `Pediatricians in ${city}, ${state}`,
     description: `Directory of ${total}+ pediatricians in ${city}, ${state}.`,
-    url: `https://findmypediatrician.com/pediatricians/${params.slug}`,
+    url: `https://www.findmypediatrician.com/pediatricians/${params.slug}`,
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: total,
@@ -107,7 +107,7 @@ export default async function CityPage({ params }: Props) {
         item: {
           "@type": "Physician",
           name: displayName(doc),
-          url: `https://findmypediatrician.com/pediatrician/${doc.id}`,
+          url: `https://www.findmypediatrician.com/pediatrician/${doc.id}`,
           ...(doc.specialty && { medicalSpecialty: doc.specialty }),
           ...(doc.address && {
             address: {
@@ -129,8 +129,8 @@ export default async function CityPage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://findmypediatrician.com/" },
-      { "@type": "ListItem", position: 2, name: "Search", item: "https://findmypediatrician.com/search" },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.findmypediatrician.com/" },
+      { "@type": "ListItem", position: 2, name: "Search", item: "https://www.findmypediatrician.com/search" },
       { "@type": "ListItem", position: 3, name: `${city}, ${state}` },
     ],
   };

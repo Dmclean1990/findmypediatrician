@@ -5,7 +5,7 @@ import { CONTACT_EMAIL } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "How FindMyPediatrician handles information when you use the site.",
-  alternates: { canonical: "https://findmypediatrician.com/privacy" },
+  alternates: { canonical: "https://www.findmypediatrician.com/privacy" },
 };
 
 export default function PrivacyPage() {

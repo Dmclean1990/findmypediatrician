@@ -26,12 +26,12 @@ export async function generateMetadata(): Promise<Metadata> {
     "pediatrician accepting new patients",
     "best pediatrician near me",
   ],
-  metadataBase: new URL("https://findmypediatrician.com"),
+  metadataBase: new URL("https://www.findmypediatrician.com"),
   openGraph: {
     title: `Find My Pediatrician - Search ${count}+ Pediatricians Near You`,
     description:
       "The most comprehensive free directory of pediatricians in the United States. Search by location, ZIP code, or doctor name.",
-    url: "https://findmypediatrician.com",
+    url: "https://www.findmypediatrician.com",
     siteName: "FindMyPediatrician",
     type: "website",
     locale: "en_US",
@@ -54,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   },
   alternates: {
-    canonical: "https://findmypediatrician.com",
+    canonical: "https://www.findmypediatrician.com",
   },
   verification: {},
   };
@@ -91,7 +91,7 @@ export default async function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "FindMyPediatrician",
-              url: "https://findmypediatrician.com",
+              url: "https://www.findmypediatrician.com",
               description:
                 `Search our directory of over ${count} pediatricians across the United States.`,
               potentialAction: {
@@ -99,7 +99,7 @@ export default async function RootLayout({
                 target: {
                   "@type": "EntryPoint",
                   urlTemplate:
-                    "https://findmypediatrician.com/search?q={search_term_string}",
+                    "https://www.findmypediatrician.com/search?q={search_term_string}",
                 },
                 "query-input": "required name=search_term_string",
               },

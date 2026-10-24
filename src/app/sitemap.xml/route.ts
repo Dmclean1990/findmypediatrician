@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 // create an index at /sitemap.xml, so robots.txt and Search Console get a 404.
 // This route is that index. Keep PER_SITEMAP in sync with src/app/sitemap.ts.
 const PER_SITEMAP = 45000;
-const BASE = "https://findmypediatrician.com";
+const BASE = "https://www.findmypediatrician.com";
 
 export const revalidate = 86400;
 

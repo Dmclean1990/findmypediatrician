@@ -5,7 +5,7 @@ import { CONTACT_EMAIL } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Contact",
   description: "Contact FindMyPediatrician to fix a listing or ask a question.",
-  alternates: { canonical: "https://findmypediatrician.com/contact" },
+  alternates: { canonical: "https://www.findmypediatrician.com/contact" },
 };
 
 export default function ContactPage() {

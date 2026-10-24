@@ -24,7 +24,7 @@ export default async function sitemap({
 
   const blogPosts = getAllPosts();
   const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
-    url: `https://findmypediatrician.com/blog/${post.slug}`,
+    url: `https://www.findmypediatrician.com/blog/${post.slug}`,
     lastModified: post.date,
     changeFrequency: "monthly" as const,
     priority: 0.7,
@@ -34,46 +34,46 @@ export default async function sitemap({
     id === 0
       ? [
           {
-            url: "https://findmypediatrician.com",
+            url: "https://www.findmypediatrician.com",
             lastModified: new Date(),
             changeFrequency: "weekly",
             priority: 1.0,
           },
           {
-            url: "https://findmypediatrician.com/search",
+            url: "https://www.findmypediatrician.com/search",
             lastModified: new Date(),
             changeFrequency: "weekly",
             priority: 0.9,
           },
           {
-            url: "https://findmypediatrician.com/map",
+            url: "https://www.findmypediatrician.com/map",
             lastModified: new Date(),
             changeFrequency: "weekly",
             priority: 0.8,
           },
           {
-            url: "https://findmypediatrician.com/blog",
+            url: "https://www.findmypediatrician.com/blog",
             lastModified: new Date(),
             changeFrequency: "weekly",
             priority: 0.8,
           },
           {
-            url: "https://findmypediatrician.com/about",
+            url: "https://www.findmypediatrician.com/about",
             changeFrequency: "yearly",
             priority: 0.3,
           },
           {
-            url: "https://findmypediatrician.com/contact",
+            url: "https://www.findmypediatrician.com/contact",
             changeFrequency: "yearly",
             priority: 0.3,
           },
           {
-            url: "https://findmypediatrician.com/privacy",
+            url: "https://www.findmypediatrician.com/privacy",
             changeFrequency: "yearly",
             priority: 0.3,
           },
           {
-            url: "https://findmypediatrician.com/terms",
+            url: "https://www.findmypediatrician.com/terms",
             changeFrequency: "yearly",
             priority: 0.3,
           },
@@ -96,7 +96,7 @@ export default async function sitemap({
   const data = pages.flatMap(({ data }) => data || []);
 
   const pediatricianPages: MetadataRoute.Sitemap = data.map((doc) => ({
-    url: `https://findmypediatrician.com/pediatrician/${doc.id}`,
+    url: `https://www.findmypediatrician.com/pediatrician/${doc.id}`,
     changeFrequency: "monthly" as const,
     priority: 0.6,
   }));

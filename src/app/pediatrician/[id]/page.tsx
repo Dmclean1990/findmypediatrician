@@ -25,11 +25,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     openGraph: {
       title, description, type: "profile",
-      url: `https://findmypediatrician.com/pediatrician/${params.id}`,
+      url: `https://www.findmypediatrician.com/pediatrician/${params.id}`,
       siteName: "FindMyPediatrician",
     },
     twitter: { card: "summary", title, description },
-    alternates: { canonical: `https://findmypediatrician.com/pediatrician/${params.id}` },
+    alternates: { canonical: `https://www.findmypediatrician.com/pediatrician/${params.id}` },
   };
 }
 
@@ -86,9 +86,9 @@ export default async function PediatricianPage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://findmypediatrician.com/" },
-      { "@type": "ListItem", position: 2, name: "Search", item: "https://findmypediatrician.com/search" },
-      ...(doc.state ? [{ "@type": "ListItem", position: 3, name: doc.state, item: `https://findmypediatrician.com/search?state=${encodeURIComponent(doc.state)}` }] : []),
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.findmypediatrician.com/" },
+      { "@type": "ListItem", position: 2, name: "Search", item: "https://www.findmypediatrician.com/search" },
+      ...(doc.state ? [{ "@type": "ListItem", position: 3, name: doc.state, item: `https://www.findmypediatrician.com/search?state=${encodeURIComponent(doc.state)}` }] : []),
       { "@type": "ListItem", position: doc.state ? 4 : 3, name },
     ],
   };

@@ -10,6 +10,6 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     // The index lists every chunk plus the city sitemap.
-    sitemap: "https://findmypediatrician.com/sitemap.xml",
+    sitemap: "https://www.findmypediatrician.com/sitemap.xml",
   };
 }

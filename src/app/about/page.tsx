@@ -4,7 +4,7 @@ import StaticPage from "@/components/StaticPage";
 export const metadata: Metadata = {
   title: "About",
   description: "FindMyPediatrician is a free directory that helps parents find a pediatrician near them.",
-  alternates: { canonical: "https://findmypediatrician.com/about" },
+  alternates: { canonical: "https://www.findmypediatrician.com/about" },
 };
 
 export default function AboutPage() {

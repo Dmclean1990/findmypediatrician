@@ -56,7 +56,7 @@ export async function GET() {
     .map(
       ({ city, state }) => `
   <url>
-    <loc>https://findmypediatrician.com/pediatricians/${slugify(city, state)}</loc>
+    <loc>https://www.findmypediatrician.com/pediatricians/${slugify(city, state)}</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>`

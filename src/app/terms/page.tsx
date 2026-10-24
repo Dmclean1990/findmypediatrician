@@ -5,7 +5,7 @@ import { CONTACT_EMAIL } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Terms of Use",
   description: "Terms for using the FindMyPediatrician directory.",
-  alternates: { canonical: "https://findmypediatrician.com/terms" },
+  alternates: { canonical: "https://www.findmypediatrician.com/terms" },
 };
 
 export default function TermsPage() {
