@@ -28,4 +28,7 @@ export type Pediatrician = {
   accepting_new_patients: boolean
   bio: string | null
   image_url: string | null
+  // Set for listings the site doesn't show ("dental", "not_pediatric", "duplicate").
+  // Every query filters on .is("hidden_reason", null).
+  hidden_reason: string | null
 }

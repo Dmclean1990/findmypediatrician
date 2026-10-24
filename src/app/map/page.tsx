@@ -99,7 +99,7 @@ export default function MapPage() {
           const lngDelta = radius / (69 * Math.cos((lat * Math.PI) / 180));
           const { data, error: dbError } = await supabase
             .from("pediatricians")
-            .select("*")
+            .select("*").is("hidden_reason", null)
             .gte("latitude", lat - latDelta)
             .lte("latitude", lat + latDelta)
             .gte("longitude", lng - lngDelta)
@@ -197,7 +197,7 @@ export default function MapPage() {
       const lngDelta = radius / (69 * Math.cos((coords.lat * Math.PI) / 180));
       const { data, error: dbError } = await supabase
         .from("pediatricians")
-        .select("*")
+        .select("*").is("hidden_reason", null)
         .gte("latitude", coords.lat - latDelta)
         .lte("latitude", coords.lat + latDelta)
         .gte("longitude", coords.lng - lngDelta)

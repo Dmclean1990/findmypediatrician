@@ -99,7 +99,7 @@ function SearchPageContent() {
     setLoading(true);
 
     try {
-      let dbQuery = supabase.from("pediatricians").select("*", { count: "exact" });
+      let dbQuery = supabase.from("pediatricians").select("*", { count: "exact" }).is("hidden_reason", null);
 
       if (query) {
         // Strip characters that would break the PostgREST or() filter syntax.
@@ -143,7 +143,7 @@ function SearchPageContent() {
 
       const { data, error } = await supabase
         .from("pediatricians")
-        .select("*")
+        .select("*").is("hidden_reason", null)
         .gte("latitude", lat - latDelta)
         .lte("latitude", lat + latDelta)
         .gte("longitude", lng - lngDelta)

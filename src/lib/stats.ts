@@ -8,7 +8,7 @@ const getListingCount = unstable_cache(
   async () => {
     const { count, error } = await supabase
       .from("pediatricians")
-      .select("*", { count: "exact", head: true });
+      .select("*", { count: "exact", head: true }).is("hidden_reason", null);
     if (error || !count) return FALLBACK_COUNT;
     return count;
   },

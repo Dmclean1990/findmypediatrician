@@ -16,7 +16,7 @@ async function fetchAllCityStates() {
   const concurrency = 10;
   const { count } = await supabase
     .from("pediatricians")
-    .select("*", { count: "exact", head: true });
+    .select("*", { count: "exact", head: true }).is("hidden_reason", null);
   const pages = Math.ceil((count || 0) / pageSize);
 
   const rows: { city: string | null; state: string | null }[] = [];
@@ -26,7 +26,7 @@ async function fetchAllCityStates() {
         const from = (start + i) * pageSize;
         return supabase
           .from("pediatricians")
-          .select("city, state")
+          .select("city, state").is("hidden_reason", null)
           .order("id", { ascending: true })
           .range(from, from + pageSize - 1);
       })

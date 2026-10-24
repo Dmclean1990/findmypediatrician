@@ -11,7 +11,7 @@ export const revalidate = 86400;
 export async function GET() {
   const { count } = await supabase
     .from("pediatricians")
-    .select("*", { count: "exact", head: true });
+    .select("*", { count: "exact", head: true }).is("hidden_reason", null);
 
   const chunks = Math.max(1, Math.ceil((count || 0) / PER_SITEMAP));
   const locs = [

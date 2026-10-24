@@ -5,7 +5,7 @@ import { getAllPosts } from "@/lib/blog";
 export async function generateSitemaps() {
   const { count } = await supabase
     .from("pediatricians")
-    .select("*", { count: "exact", head: true });
+    .select("*", { count: "exact", head: true }).is("hidden_reason", null);
 
   const total = count || 0;
   const perSitemap = 45000;
@@ -88,7 +88,7 @@ export default async function sitemap({
       const from = start + i * pageSize;
       return supabase
         .from("pediatricians")
-        .select("id")
+        .select("id").is("hidden_reason", null)
         .order("id", { ascending: true })
         .range(from, from + pageSize - 1);
     })

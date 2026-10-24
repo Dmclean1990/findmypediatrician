@@ -8,7 +8,7 @@ type Props = { params: { id: string } };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { data } = await supabase
     .from("pediatricians")
-    .select("first_name, last_name, full_name, city, state, specialty")
+    .select("first_name, last_name, full_name, city, state, specialty").is("hidden_reason", null)
     .eq("id", params.id)
     .single();
 
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PediatricianPage({ params }: Props) {
   const { data: doc, error } = await supabase
     .from("pediatricians")
-    .select("*")
+    .select("*").is("hidden_reason", null)
     .eq("id", params.id)
     .single<Pediatrician>();
 

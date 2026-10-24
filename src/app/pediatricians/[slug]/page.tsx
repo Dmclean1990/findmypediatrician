@@ -81,7 +81,7 @@ export default async function CityPage({ params }: Props) {
   // Fetch pediatricians in this city/state
   const { data, error } = await supabase
     .from("pediatricians")
-    .select("*")
+    .select("*").is("hidden_reason", null)
     .ilike("city", city)
     .ilike("state", state)
     .order("last_name", { ascending: true })
