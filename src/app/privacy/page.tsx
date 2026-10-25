@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import StaticPage from "@/components/StaticPage";
-import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -27,6 +26,11 @@ export default function PrivacyPage() {
           not stored.
         </li>
         <li>
+          <strong>Messages you send us.</strong> The contact form sends your name, email and
+          message to our inbox through FormSubmit, a form delivery service. We use them only to
+          reply to you.
+        </li>
+        <li>
           <strong>Usage data.</strong> We use Google Analytics and Vercel Analytics to see which
           pages are visited and how the site performs. These tools may use cookies and collect
           things like your browser type, device and approximate location.
@@ -34,7 +38,7 @@ export default function PrivacyPage() {
       </ul>
       <h2>What we don&apos;t do</h2>
       <ul>
-        <li>We don&apos;t ask for your name or create accounts.</li>
+        <li>We don&apos;t create accounts. We only ask for your name if you contact us.</li>
         <li>We don&apos;t sell your personal information.</li>
       </ul>
       <h2>Other services</h2>
@@ -46,7 +50,7 @@ export default function PrivacyPage() {
       <p>The site is meant for parents and caregivers, not for children to use on their own.</p>
       <h2>Contact</h2>
       <p>
-        Questions about privacy? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+        Questions about privacy? Use our <a href="/contact">contact form</a>.
       </p>
     </StaticPage>
   );

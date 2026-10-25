@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import StaticPage from "@/components/StaticPage";
-import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
@@ -38,7 +37,7 @@ export default function TermsPage() {
       <p>We may update these terms. The date above shows the latest version.</p>
       <h2>Contact</h2>
       <p>
-        Questions? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+        Questions? Use our <a href="/contact">contact form</a>.
       </p>
     </StaticPage>
   );
